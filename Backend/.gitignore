@@ -1,0 +1,38 @@
+### Build artifacts ###
+bin/
+obj/
+**/bin/
+**/obj/
+
+### User-uploaded files — never commit actual document content ###
+Uploads/
+
+### Local secrets / machine-specific config ###
+appsettings.Development.json
+appsettings.json
+appsettings.Local.json
+appsettings.*.json.user
+*.user
+
+### EF Core migrations are fine to commit — do NOT ignore Migrations/
+
+### Visual Studio / Rider ###
+.vs/
+.vscode/
+*.suo
+*.userosscache
+*.sln.docstates
+
+### NuGet ###
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+
+### Logs ###
+*.log
+logs/
+
+### OS noise ###
+.DS_Store
+Thumbs.db
