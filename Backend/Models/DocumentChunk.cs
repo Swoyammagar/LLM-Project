@@ -1,4 +1,5 @@
 ﻿using System;
+using Pgvector;
 
 namespace Backend.Models
 {
@@ -11,5 +12,6 @@ namespace Backend.Models
         public int CharacterCount { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public Document Document { get; set; } = null!;
+        public Vector? Embedding { get; set; }
     }
 }

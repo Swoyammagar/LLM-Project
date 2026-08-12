@@ -30,5 +30,7 @@
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
         public ICollection<Document> Documents { get; set; } = new List<Document>();
+
+        public ICollection<Conversation> Conversations { get; set; } = new List<Conversation>();
     }
 }

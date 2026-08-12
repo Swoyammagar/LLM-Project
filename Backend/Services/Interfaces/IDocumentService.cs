@@ -13,5 +13,6 @@ namespace Backend.Services.Interfaces
         Task<DocumentListDto> GetUserDocumentsAsync(Guid userId, int pageNumber = 1, int pageSize = 10);
         Task<DocumentDto?> GetDocumentByIdAsync(Guid documentId, Guid userId);
         Task<bool> DeleteDocumentAsync(Guid documentId, Guid userId);
+        Task<Document?> GetDocumentEntityByIdAsync(Guid documentId, Guid userId);
     }
 }
