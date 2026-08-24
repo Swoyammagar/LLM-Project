@@ -68,7 +68,8 @@ namespace Backend.Controllers
                     userId,
                     request.Question,
                     topK,
-                    similarityThreshold);
+                    similarityThreshold,
+                    request.DocumentId);
 
                 return Ok(results);
             }
@@ -91,5 +92,6 @@ namespace Backend.Controllers
     public class SemanticSearchRequest
     {
         public string Question { get; set; } = string.Empty;
+        public Guid? DocumentId { get; set; }
     }
 }

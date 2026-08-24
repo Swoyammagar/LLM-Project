@@ -25,14 +25,13 @@ namespace Backend.Controllers
         }
         [HttpPost("chat")]
         public async Task<ActionResult<ChatResponse>> Chat(
-            [FromBody] ChatRequest request,
-            [FromQuery] int? maxContextChunks = null,
-            [FromQuery] float? similarityThreshold = null,
-            [FromQuery] Guid? conversationId = null)
+        [FromBody] ChatRequest request,
+        [FromQuery] int? maxContextChunks = null,
+        [FromQuery] float? similarityThreshold = null,
+        [FromQuery] Guid? conversationId = null)
         {
             try
             {
-                // Get authenticated user ID
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
                 if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
                 {
@@ -40,39 +39,34 @@ namespace Backend.Controllers
                     return Unauthorized("Invalid authentication token");
                 }
 
-                // Validate request
                 if (string.IsNullOrWhiteSpace(request.Question))
                 {
                     return BadRequest("Question cannot be empty.");
                 }
 
-                // Validate parameters
                 if (maxContextChunks.HasValue && maxContextChunks <= 0)
                 {
                     return BadRequest("maxContextChunks must be greater than 0.");
                 }
 
-                if (similarityThreshold.HasValue &&
-                    (similarityThreshold < 0 || similarityThreshold > 1))
+                if (similarityThreshold.HasValue && (similarityThreshold < 0 || similarityThreshold > 1))
                 {
                     return BadRequest("similarityThreshold must be between 0 and 1.");
                 }
 
                 _logger.LogInformation(
-                    "Chat request from user {UserId}. Question: {Question}",
-                    userId, request.Question);
+                    "Chat request from user {UserId}. Question: {Question}, DocumentId: {DocumentId}",
+                    userId, request.Question, request.DocumentId?.ToString() ?? "ALL");
 
-                // Execute RAG pipeline with history
                 var response = await _chatService.ChatAsync(
                     userId,
                     request.Question,
                     maxContextChunks,
                     similarityThreshold,
-                    conversationId);
+                    conversationId,
+                    request.DocumentId); // <-- from body, since it's tied to the question payload
 
-                _logger.LogInformation(
-                    "Chat response sent to user {UserId}.",
-                    userId);
+                _logger.LogInformation("Chat response sent to user {UserId}.", userId);
 
                 return Ok(response);
             }
@@ -84,16 +78,12 @@ namespace Backend.Controllers
             catch (InvalidOperationException ex)
             {
                 _logger.LogError(ex, "Operation error");
-                return StatusCode(
-                    StatusCodes.Status503ServiceUnavailable,
-                    ex.Message);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error in chat endpoint");
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError,
-                    "An error occurred while processing your question");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your question");
             }
         }
         [HttpGet("conversations")]

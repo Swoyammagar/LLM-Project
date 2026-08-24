@@ -8,7 +8,8 @@
             string question,
             int? maxContextChunks = null,
             float? similarityThreshold = null,
-            Guid? conversationId = null);
+            Guid? conversationId = null,
+            Guid? documentId=null);
     }
 }
 

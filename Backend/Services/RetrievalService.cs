@@ -24,44 +24,38 @@ namespace Backend.Services
             Guid userId,
             string question,
             int? maxChunks = null,
-            float? similarityThreshold = null)
+            float? similarityThreshold = null,
+            Guid? documentId = null)
         {
-            // Validate input
             if (string.IsNullOrWhiteSpace(question))
             {
                 throw new ArgumentException("Question cannot be null or empty.", nameof(question));
             }
 
-            // Use provided values or fallback to configuration defaults
             int chunksLimit = maxChunks ?? _options.MaxChunksToRetrieve;
             int contextLimit = _options.MaxContextCharacters;
 
             try
             {
                 _logger.LogInformation(
-                    "Starting retrieval process for user {UserId}. Question: {Question}",
-                    userId, question);
+                    "Starting retrieval process for user {UserId}. Question: {Question}, DocumentId: {DocumentId}",
+                    userId, question, documentId?.ToString() ?? "ALL");
 
-                // Step 1: Perform semantic search to find relevant chunks
                 var semanticResults = await _semanticSearchService.SearchAsync(
                     userId,
                     question,
                     topK: chunksLimit,
-                    similarityThreshold: similarityThreshold);
+                    similarityThreshold: similarityThreshold,
+                    documentId: documentId);
 
                 _logger.LogInformation(
                     "Semantic search returned {ChunkCount} chunks for user {UserId}",
                     semanticResults.Count, userId);
 
-                // Step 2: Build combined context from semantic search results
-                var retrievalResult = BuildRetrievalResult(
-                    question,
-                    semanticResults,
-                    contextLimit);
+                var retrievalResult = BuildRetrievalResult(question, semanticResults, contextLimit);
 
                 _logger.LogInformation(
-                    "Retrieval completed for user {UserId}. " +
-                    "Chunks retrieved: {ChunkCount}, Context size: {ContextSize} characters",
+                    "Retrieval completed for user {UserId}. Chunks retrieved: {ChunkCount}, Context size: {ContextSize} characters",
                     userId, retrievalResult.TotalChunksRetrieved, retrievalResult.ContextCharacterCount);
 
                 return retrievalResult;
@@ -73,12 +67,11 @@ namespace Backend.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,
-                    "Error during retrieval process. User: {UserId}, Question: {Question}",
-                    userId, question);
+                _logger.LogError(ex, "Error during retrieval process. User: {UserId}, Question: {Question}", userId, question);
                 throw;
             }
         }
+        // BuildRetrievalResult unchanged
 
         /// <summary>
         /// Builds a RetrievalResult by combining semantic search results into context.

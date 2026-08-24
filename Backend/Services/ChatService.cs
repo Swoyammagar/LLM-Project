@@ -32,7 +32,8 @@ namespace Backend.Services
             string question,
             int? maxContextChunks = null,
             float? similarityThreshold = null,
-            Guid? conversationId = null)
+            Guid? conversationId = null,
+            Guid? documentId = null)
         {
             // Validate input
             if (string.IsNullOrWhiteSpace(question))
@@ -55,7 +56,8 @@ namespace Backend.Services
                     userId,
                     question,
                     maxChunks: maxContextChunks,
-                    similarityThreshold: similarityThreshold);
+                    similarityThreshold: similarityThreshold,
+                    documentId: documentId);
 
                 _logger.LogInformation(
                     "Retrieved {ChunkCount} chunks. Context size: {ContextSize} characters",

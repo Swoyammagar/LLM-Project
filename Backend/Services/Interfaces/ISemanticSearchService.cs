@@ -8,6 +8,7 @@ namespace Backend.Services.Interfaces
         Guid userId,
         string question,
         int? topK = null,
-        float? similarityThreshold = null);
+        float? similarityThreshold = null,
+        Guid? documentId = null);
     }
 }

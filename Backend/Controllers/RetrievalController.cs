@@ -57,7 +57,7 @@ namespace Backend.Controllers
                     userId, request.Question);
 
                 var result = await _retrievalService.RetrieveAsync(
-                    userId, request.Question, maxChunks, similarityThreshold);
+                    userId, request.Question, maxChunks, similarityThreshold, request.DocumentId);
 
                 _logger.LogInformation(
                     "Retrieval completed. User: {UserId}, Chunks retrieved: {ChunkCount}, Context size: {ContextSize}",
@@ -79,7 +79,8 @@ namespace Backend.Controllers
         public class RetrieveRequest
         {
             public string Question { get; set; } = string.Empty;
-        }
+            public Guid? DocumentId { get; set; }
+            }
 
     }
 }

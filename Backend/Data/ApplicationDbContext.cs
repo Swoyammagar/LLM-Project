@@ -84,7 +84,7 @@ namespace Backend.Data
             // This tells EF Core to use pgvector's vector type
             modelBuilder.Entity<DocumentChunk>()
                 .Property(dc => dc.Embedding)
-                .HasColumnType("vector(384)");
+                .HasColumnType("vector(768)");
 
             // ═════════════════════════════════════════════════════════════════
             // CONVERSATION CONFIGURATION
